@@ -63,7 +63,14 @@ class MotorDriver():
         Sets the duty to move motor backwards or forwards.
         @param duty is the PWM a user wants to run the motor at.
         """
+        # Accounting for positive saturation
+        if (duty > 100):
+            duty = 100
         
+        # Accounting for negative saturation
+        elif (duty < -100):
+            duty = -100
+            
         # Make motor rotate forwards if positive duty cycle
         if (duty > 0):
                 self.t3ch1.pulse_width_percent(0)
@@ -76,7 +83,9 @@ class MotorDriver():
                 
         print('Duty: ', duty)
                 
-                
+    def enable(self):
+        self.pinENOCDA.high()
+          
 if __name__ == "__main__":
     
     ## motor1 Motor object 1.
