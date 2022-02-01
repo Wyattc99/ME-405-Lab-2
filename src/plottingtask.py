@@ -9,8 +9,18 @@ Can send a PWM duty cycle to the motor to control how fast the motor spins. Uses
 @copyright by Jameson Spitz all rights reserved
 """
 import serial
+import time
 
 with serial.Serial('COM27', 115200) as s_port:
-    s_port.write(b'data')
-    s_port.readline().split(b',')
+    time.sleep(5)
+    #s_port.write (b'main()')
+    time.sleep(2)
+    s_port.write (b'16000')
+    time.sleep(2)
+    s_port.write (b'30')
+    print (s_port.readline ().split (b','))
     
+if __name__ == "__main__":
+    print(s_port)
+    
+
