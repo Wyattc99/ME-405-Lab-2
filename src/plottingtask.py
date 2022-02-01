@@ -11,16 +11,25 @@ Can send a PWM duty cycle to the motor to control how fast the motor spins. Uses
 import serial
 import time
 
-with serial.Serial('COM27', 115200) as s_port:
-    time.sleep(5)
+time_data = []
+position = []
+
+with serial.Serial('COM6', 115200) as s_port:
     #s_port.write (b'main()')
+    #time.sleep(2)
+    #s_port.write(b'0x04\r')
     time.sleep(2)
-    s_port.write (b'16000')
+    s_port.write (b'16000\r')
     time.sleep(2)
-    s_port.write (b'30')
-    print (s_port.readline ().split (b','))
+    s_port.write (b'30\r')
+    
+    while True:
+        position.append(s_port.readline().split (b','))
+        
+    print(position)
     
 if __name__ == "__main__":
-    print(s_port)
+    print('Hello')
+    #print(s_port)
     
 

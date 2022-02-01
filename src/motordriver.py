@@ -81,8 +81,6 @@ class MotorDriver():
                 self.t3ch1.pulse_width_percent(abs(duty))
                 self.t3ch2.pulse_width_percent(0)
                 
-        print('Duty: ', duty)
-                
     def enable(self):
         self.pinENOCDA.high()
           
