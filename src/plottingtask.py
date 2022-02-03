@@ -1,66 +1,72 @@
 """!
 @file plottingtask.py
-This file configures Nucleo pins, timers, and channels for so that it can send voltage to a motor.
-Can send a PWM duty cycle to the motor to control how fast the motor spins. Uses a L6206 motor shield to control motor direction.
+The PC program to communicate to Nucleo through the serial port. This
+program also plots the data received through the serial port in a
+Encoder Ticks, vs Time plot
 @author Jacob Wong
 @author Wyatt Conner
 @author Jameson Spitz
-@date   27-Jan-22
-@copyright by Jameson Spitz all rights reserved
+@date   2-Feb-22
+@copyright by Jacob Wong all rights reserved
 """
+
 import serial
 import time
 from matplotlib import pyplot
 
-time_data = []
-position = []
+## Empty Lists and string for manipulating data from serial port
 
-
-rows = []
 data1 = [] 
 data2 = []
 string = ''
-i = 0 
-runs = 0
-flag = False
-num = False
-newline = []
-char = []
 time_count = []
 ticks = []
 
+## Begins communication with Serial Port COM27
 with serial.Serial('COM27', 115200) as s_port:
         time.sleep(.1)
+        ## CTRL-C
         s_port.write(b'\x03')
         time.sleep(.1)
+        ## CTRL-D
         s_port.write(b'\x04')
         time.sleep(.1)
+        ## Sets Desired Ticks to 16000
         s_port.write (b'16000\r')
         time.sleep(.1)
+        ## Sets Proportional Gain to 16000
         s_port.write (b'30\r')
         time.sleep(.5)
+        ## Eliminates text from output buffer
         s_port.reset_output_buffer()
         time.sleep(.1)
+        ## Flushes buffer until prompt
         s_port.read_until(b'30\r')
         time.sleep(.1)
         time.sleep(.1)
+        ## Writes time data as a string to 'data1'
         data1 = s_port.read_until(b']')
         time.sleep(.1)
+        ## Writes ticks data as a string to 'data2'
         data2 = s_port.read_until(b']')
         time.sleep(.1)
+        ## Decodes both strings to ASCII
         data_string1 = data1.decode('Ascii')
         data_string2 = data2.decode('Ascii')
         
+        ## Removes extraneous characters from data_string 1
         data_string1.strip('\n')
         data_string1.strip(' ')
         data_string1.strip('[')
         data_string1.strip(']')
         
+        ## Removes extraneous characters from data_string 2
         data_string2.strip('\n')
         data_string2.strip(' ')
         data_string2.strip('[')
         data_string2.strip(']')
         
+        ## Converts data_string1 to list called 'time_count'
         for i in data_string1:
             if(i.isnumeric()):
                 string += i
@@ -68,23 +74,25 @@ with serial.Serial('COM27', 115200) as s_port:
                 time_count.append(int(string)/1000)
                 string = ''
         
+        ## Converts data_string2 to list called 'ticks'
         for i in data_string2:
             if(i.isnumeric()):
                 string += i
             elif(i == ',' or i == ']'):
                 ticks.append(int(string))
                 string = ''
-    
-print('\nTime:\n', time_count)                      # Print data using pyplot
+
+## Prints final data lists in command window
+print('\nTime:\n', time_count)                   
 print('\nTicks:\n', ticks)
+
+## Creates and formats 'Encoder Ticks vs Time' plot
 font = {'fontname':'Times New Roman'}
 pyplot.plot(time_count, ticks, '-ok')
-pyplot.title('Time vs Encoder Ticks', font)
+pyplot.title('Encoder Ticks vs. Time', font)
 pyplot.xlabel('Time, t [s]', font)
 pyplot.ylabel('Encoder Ticks', font)
 pyplot.grid()
+
 if __name__ == "__main__":
     print('')
-    #print(s_port)
-    
-

@@ -4,7 +4,7 @@ This is the main file description
 @author Jacob Wong
 @author Wyatt Conner
 @author Jameson Spitz
-@date   27-Jan-22
+@date   2-Feb-22
 @copyright by Jameson Spitz all rights reserved
 """
 import motordriver
@@ -14,6 +14,9 @@ import time
 import pyb
 
 def main():
+    """!
+    The main program: All objects from each class are created here. 
+    """
     
     ## Motor object instantiated from motor driver class.
     
@@ -34,8 +37,6 @@ def main():
     ## Prompts user to set a ticks set point.
     
     controller.set_point()
-    # 60 works well offset of 0
-    # 30 works well offset of 10
     
     ## Prompts user to set a controller gain.
     
@@ -57,14 +58,33 @@ def main():
     
     start_time = time.ticks_ms()
 
+    ## While loop that runs for 5 seconds
     while current_time <= 5_000:
+        
+        ## Runs position control function from positioncontrol.py
+        
         controller.position_control()
+        
+        ## Updates Current Time
+        
         current_time = time.ticks_diff(time.ticks_ms(), start_time)
+        
+        ## Updates motor speed every 10ms
+        
         time.sleep_ms(10)
+        
+        ## Creates a list of Time data
+        
         time_list.append(current_time)
+        
+        ## Creates a list of Time data
         position_list.append(encoder.get_position())
+        
     print(time_list, position_list)
+    
+    ## Shuts off motor
     motor.set_duty_cycle(0)
+    
     print('Done')
     
 if __name__ == "__main__":
