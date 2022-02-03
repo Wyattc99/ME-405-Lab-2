@@ -82,6 +82,10 @@ class MotorDriver():
                 self.t3ch2.pulse_width_percent(0)
                 
     def enable(self):
+        """!
+        This method is called to enable the pin on the board to allow current
+        flow to the motor to enable motion of the motor. 
+        """
         self.pinENOCDA.high()
           
 if __name__ == "__main__":

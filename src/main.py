@@ -30,15 +30,15 @@ def main():
     
     controller = positioncontrol.PositionControlTask(motor,encoder)
   
-    ## Enables motors to pin.
+    # Enables motors to pin.
     
     motor.enable()
 
-    ## Prompts user to set a ticks set point.
+    # Prompts user to set a ticks set point.
     
     controller.set_point()
     
-    ## Prompts user to set a controller gain.
+    ##Prompts user to set a controller gain.
     
     controller.set_gain()
     
@@ -58,10 +58,10 @@ def main():
     
     start_time = time.ticks_ms()
 
-    ## While loop that runs for 5 seconds
+    # While loop that runs for 5 seconds
     while current_time <= 5_000:
         
-        ## Runs position control function from positioncontrol.py
+        # Runs position control function from positioncontrol.py
         
         controller.position_control()
         
@@ -69,20 +69,20 @@ def main():
         
         current_time = time.ticks_diff(time.ticks_ms(), start_time)
         
-        ## Updates motor speed every 10ms
+        # Updates motor speed every 10ms
         
         time.sleep_ms(10)
         
-        ## Creates a list of Time data
+        # Creates a list of Time data
         
         time_list.append(current_time)
         
-        ## Creates a list of Time data
+        # Creates a list of Time data
         position_list.append(encoder.get_position())
         
     print(time_list, position_list)
     
-    ## Shuts off motor
+    # Shuts off motor
     motor.set_duty_cycle(0)
     
     print('Done')

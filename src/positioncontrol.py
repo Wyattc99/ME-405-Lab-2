@@ -1,5 +1,5 @@
 """!
-@file postioncontrol.py
+@file positioncontrol.py
 Control Motor's position
 @author Jacob Wong
 @author Wyatt Conner
@@ -50,7 +50,9 @@ class PositionControlTask():
             
     def set_gain(self):
         """!
-        Method that sets the gain desired
+        This method is used to set the gain of the porportional controller for the
+        position controller. This gain is multiplied by the error of the posisiton
+        to calculate the duty cycle to send to the motor. 
         """
         try:
             self.gain = float(input('Enter desired porportional gain value \n'))
@@ -59,16 +61,22 @@ class PositionControlTask():
     
     def position_control(self):
         """!
-        Method to control position
+        This method used in an external loop to control the motor and encoder
+        pair for the desired location. This method updates the encoder position,
+        and calculates the error of system with the difference of the current
+        position to the desired position, this is multiplied by the gain to calculate
+        the duty cycle of the motor each iteration. 
         """
         # Update the encoder position
         self.Encoder.update_delta()
         
+        ## This variable is used to store the ticks value of the encoder
         self.position = self.Encoder.get_position()
         
         self.error = (-self.position + self.setpoint)/self.setpoint
         
         if self.error > 0:
+            ## Duty is represents the duty cycle being sent to the motor object
             self.duty = self.gain*self.error + 15
         elif self.error < 0:
             self.duty = self.gain*self.error - 15

@@ -14,33 +14,36 @@ import serial
 import time
 from matplotlib import pyplot
 
-## Empty Lists and string for manipulating data from serial port
-
+## Empty Lists and string for manipulating data from serial port time data
 data1 = [] 
+## Empty Lists and string for manipulating data from serial port position data
 data2 = []
+## Empty Lists and string for manipulating data from serial port overall data
 string = ''
+## Empty Lists and string for manipulating data from serial port int values of time data
 time_count = []
+## Empty Lists and string for manipulating data from serial port int values of ticks data
 ticks = []
 
-## Begins communication with Serial Port COM27
+# Begins communication with Serial Port COM27
 with serial.Serial('COM27', 115200) as s_port:
         time.sleep(.1)
-        ## CTRL-C
+        # CTRL-C
         s_port.write(b'\x03')
         time.sleep(.1)
-        ## CTRL-D
+        # CTRL-D
         s_port.write(b'\x04')
         time.sleep(.1)
-        ## Sets Desired Ticks to 16000
+        # Sets Desired Ticks to 16000
         s_port.write (b'16000\r')
         time.sleep(.1)
-        ## Sets Proportional Gain to 16000
+        # Sets Proportional Gain to 16000
         s_port.write (b'30\r')
         time.sleep(.5)
-        ## Eliminates text from output buffer
+        # Eliminates text from output buffer
         s_port.reset_output_buffer()
         time.sleep(.1)
-        ## Flushes buffer until prompt
+        # Flushes buffer until prompt
         s_port.read_until(b'30\r')
         time.sleep(.1)
         time.sleep(.1)
@@ -50,23 +53,27 @@ with serial.Serial('COM27', 115200) as s_port:
         ## Writes ticks data as a string to 'data2'
         data2 = s_port.read_until(b']')
         time.sleep(.1)
-        ## Decodes both strings to ASCII
+        
+        # Decodes both strings to ASCII
+        
+        ## Time data in a string format
         data_string1 = data1.decode('Ascii')
+        ## Ticks data in a string format
         data_string2 = data2.decode('Ascii')
         
-        ## Removes extraneous characters from data_string 1
+        # Removes extraneous characters from data_string 1
         data_string1.strip('\n')
         data_string1.strip(' ')
         data_string1.strip('[')
         data_string1.strip(']')
         
-        ## Removes extraneous characters from data_string 2
+        # Removes extraneous characters from data_string 2
         data_string2.strip('\n')
         data_string2.strip(' ')
         data_string2.strip('[')
         data_string2.strip(']')
         
-        ## Converts data_string1 to list called 'time_count'
+        # Converts data_string1 to list called 'time_count'
         for i in data_string1:
             if(i.isnumeric()):
                 string += i
@@ -74,7 +81,7 @@ with serial.Serial('COM27', 115200) as s_port:
                 time_count.append(int(string)/1000)
                 string = ''
         
-        ## Converts data_string2 to list called 'ticks'
+        # Converts data_string2 to list called 'ticks'
         for i in data_string2:
             if(i.isnumeric()):
                 string += i
@@ -82,7 +89,7 @@ with serial.Serial('COM27', 115200) as s_port:
                 ticks.append(int(string))
                 string = ''
 
-## Prints final data lists in command window
+# Prints final data lists in command window
 print('\nTime:\n', time_count)                   
 print('\nTicks:\n', ticks)
 
