@@ -10,26 +10,81 @@ Can send a PWM duty cycle to the motor to control how fast the motor spins. Uses
 """
 import serial
 import time
+from matplotlib import pyplot
 
 time_data = []
 position = []
 
-with serial.Serial('COM6', 115200) as s_port:
-    #s_port.write (b'main()')
-    #time.sleep(2)
-    #s_port.write(b'0x04\r')
-    time.sleep(2)
-    s_port.write (b'16000\r')
-    time.sleep(2)
-    s_port.write (b'30\r')
-    
-    while True:
-        position.append(s_port.readline().split (b','))
+
+rows = []
+data1 = [] 
+data2 = []
+string = ''
+i = 0 
+runs = 0
+flag = False
+num = False
+newline = []
+char = []
+time_count = []
+ticks = []
+
+with serial.Serial('COM27', 115200) as s_port:
+        time.sleep(.1)
+        s_port.write(b'\x03')
+        time.sleep(.1)
+        s_port.write(b'\x04')
+        time.sleep(.1)
+        s_port.write (b'16000\r')
+        time.sleep(.1)
+        s_port.write (b'30\r')
+        time.sleep(.5)
+        s_port.reset_output_buffer()
+        time.sleep(.1)
+        s_port.read_until(b'30\r')
+        time.sleep(.1)
+        time.sleep(.1)
+        data1 = s_port.read_until(b']')
+        time.sleep(.1)
+        data2 = s_port.read_until(b']')
+        time.sleep(.1)
+        data_string1 = data1.decode('Ascii')
+        data_string2 = data2.decode('Ascii')
         
-    print(position)
+        data_string1.strip('\n')
+        data_string1.strip(' ')
+        data_string1.strip('[')
+        data_string1.strip(']')
+        
+        data_string2.strip('\n')
+        data_string2.strip(' ')
+        data_string2.strip('[')
+        data_string2.strip(']')
+        
+        for i in data_string1:
+            if(i.isnumeric()):
+                string += i
+            elif(i == ',' or i == ']'):
+                time_count.append(int(string)/1000)
+                string = ''
+        
+        for i in data_string2:
+            if(i.isnumeric()):
+                string += i
+            elif(i == ',' or i == ']'):
+                ticks.append(int(string))
+                string = ''
     
+print('\nTime:\n', time_count)                      # Print data using pyplot
+print('\nTicks:\n', ticks)
+font = {'fontname':'Times New Roman'}
+pyplot.plot(time_count, ticks, '-ok')
+pyplot.title('Time vs Encoder Ticks', font)
+pyplot.xlabel('Time, t [s]', font)
+pyplot.ylabel('Encoder Ticks', font)
+pyplot.grid()
 if __name__ == "__main__":
-    print('Hello')
+    print('')
     #print(s_port)
     
 

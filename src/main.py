@@ -65,6 +65,7 @@ def main():
         position_list.append(encoder.get_position())
     print(time_list, position_list)
     motor.set_duty_cycle(0)
+    print('Done')
     
 if __name__ == "__main__":
     main()
